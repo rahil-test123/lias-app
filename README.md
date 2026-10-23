@@ -52,9 +52,9 @@ Les comptes de `data.sql` sont destinés au développement. Pour une base vide s
 
 | Rôle | Email | Mot de passe |
 |------|-------|--------------|
-| Admin | admin@lias.ma | [voir encadrant] |
+| Admin | rahil.msouhli123@gmail.com | [voir encadrant] |
 | Directeur | directeur@lias.ma | [voir encadrant] |
-| Membre | membre@lias.ma | [voir encadrant] |
+| Membre | wafaa@gmail.com | [voir encadrant] |
 
 ## Auteur
 
