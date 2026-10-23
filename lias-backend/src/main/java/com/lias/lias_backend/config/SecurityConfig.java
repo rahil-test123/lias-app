@@ -42,6 +42,10 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/stock/**").hasAnyRole("ADMIN", "DIRECTEUR")
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/reunions/**").hasAnyRole("ADMIN", "DIRECTEUR")
+                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/reunions/**").hasAnyRole("ADMIN", "DIRECTEUR")
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/reunions/**").hasAnyRole("ADMIN", "DIRECTEUR")
                 // Routes publiques
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
@@ -60,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

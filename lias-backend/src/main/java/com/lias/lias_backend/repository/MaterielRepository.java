@@ -9,6 +9,9 @@ import java.util.List;
 
 @Repository
 public interface MaterielRepository extends JpaRepository<Materiel, Long> {
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select m from Materiel m where m.id = :id")
+    java.util.Optional<Materiel> verrouiller(Long id);
 
     List<Materiel> findByNomContainingIgnoreCase(String nom);
 }

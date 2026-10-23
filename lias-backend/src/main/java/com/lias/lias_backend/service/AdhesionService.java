@@ -32,10 +32,25 @@ public class AdhesionService {
     private final MandatRepository mandatRepository;
     private final NotificationRepository notificationRepository;
     private final AuthService authService;
+    private final org.springframework.security.crypto.password.PasswordEncoder encoder;
+    private final PrivatePdfStorage files;
+
+    @Transactional
+    public AdhesionDTO soumettreAvecCv(AdhesionDTO dto, org.springframework.web.multipart.MultipartFile cv) {
+        String key = cv == null || cv.isEmpty() ? null : files.save(cv);
+        try {
+            AdhesionDTO result = soumettre(dto);
+            DemandeAdhesion demande = adhesionRepository.findById(result.getId()).orElseThrow();
+            demande.setCv(key);
+            adhesionRepository.saveAndFlush(demande);
+            return toDTO(demande);
+        } catch (RuntimeException e) { files.delete(key); throw e; }
+    }
 
     @Transactional
     public AdhesionDTO soumettre(AdhesionDTO dto) {
-        if (membreRepository.existsByEmail(dto.getEmail())) {
+        dto.setEmail(dto.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
+        if (membreRepository.existsByEmail(dto.getEmail()) || adhesionRepository.existsByEmail(dto.getEmail())) {
             throw new BusinessException("Un membre avec cet email existe déjà");
         }
 
@@ -44,6 +59,7 @@ public class AdhesionService {
                 .prenom(dto.getPrenom())
                 .email(dto.getEmail())
                 .motivation(dto.getMotivation())
+                .passwordHash(dto.getPassword() == null ? null : encoder.encode(dto.getPassword()))
                 .statut(DemandeAdhesion.StatutDemande.EN_ATTENTE)
                 .build();
 
@@ -101,6 +117,10 @@ public class AdhesionService {
         createDTO.setStatut(Membre.StatutMembre.DOCTORANT);
         createDTO.setRole(Membre.RoleMembre.ROLE_DOCTORANT);
         authService.register(createDTO);
+        Membre nouveau = membreRepository.findByEmail(demande.getEmail()).orElseThrow();
+        if (demande.getPasswordHash() != null) nouveau.setPassword(demande.getPasswordHash());
+        nouveau.setCv(demande.getCv());
+        membreRepository.save(nouveau);
 
         log.info("Demande {} acceptée, compte créé pour: {}",
                 id, demande.getEmail());
@@ -136,6 +156,7 @@ public class AdhesionService {
         dto.setPrenom(d.getPrenom());
         dto.setEmail(d.getEmail());
         dto.setMotivation(d.getMotivation());
+        dto.setCv(d.getCv() == null ? null : "disponible");
         dto.setStatut(d.getStatut());
         dto.setDateSoumission(d.getDateSoumission());
         dto.setDateDecision(d.getDateDecision());

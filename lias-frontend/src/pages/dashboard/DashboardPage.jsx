@@ -1,3 +1,4 @@
+import api from '../../api/axios'
 import { useQuery } from '@tanstack/react-query'
 import { Users, BookOpen, Calendar, ClipboardList, Bell, ArrowRight } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
@@ -6,7 +7,7 @@ import { getPublications } from '../../api/publications'
 import { getEvenements } from '../../api/evenements'
 import { getAdhesions } from '../../api/adhesions'
 import { getNonLues } from '../../api/notifications'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 import { Link } from 'react-router-dom'
 import { TypeEvBadge } from '../../components/ui/Badge'
 
@@ -75,7 +76,8 @@ function StatCard({ icon: Icon, label, value, accent, to, delay = 0 }) {
 }
 
 export default function DashboardPage() {
-  const { user, isPrivileged } = useAuth()
+  const { user, isPrivileged, isAdmin } = useAuth()
+  const { data: adminStats } = useQuery({ queryKey: ['indicateurs'], queryFn: () => api.get('/admin/dossiers/indicateurs').then(r => r.data), enabled: isAdmin })
 
   const { data: membres }      = useQuery({ queryKey: ['membres-actifs'],            queryFn: getMembresActifs })
   const { data: publications }  = useQuery({ queryKey: ['publications-all'],          queryFn: () => getPublications({ size: 100, sort: 'annee,asc' }) })
@@ -99,6 +101,7 @@ export default function DashboardPage() {
     { icon: BookOpen,     label: 'Publications',        value: publications?.totalElements, accent: '#C2410C', to: '/publications' },
     { icon: Calendar,     label: 'Événements à venir', value: aVenir.length,              accent: '#15803D', to: '/evenements' },
     { icon: Bell,         label: 'Notifications',       value: nonLues?.length ?? 0,       accent: '#5B21B6', to: '/notifications' },
+    ...(isAdmin ? [{ icon: Users, label: 'Utilisateurs inscrits', value: adminStats?.utilisateurs, accent: '#16181D', to: '/utilisateurs' }, { icon: ClipboardList, label: 'CV déposés', value: adminStats?.cv, accent: '#C2410C', to: '/utilisateurs' }, { icon: Calendar, label: 'Réunions enregistrées', value: adminStats?.reunions, accent: '#15803D', to: '/reunions' }] : []),
     ...(isPrivileged ? [{ icon: ClipboardList, label: 'En attente', value: enAttente.length, accent: '#92400E', to: '/adhesions' }] : []),
   ]
 

@@ -5,7 +5,7 @@ import { Search, Plus, ChevronRight, UserCheck, UserX } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { getMembres, createMembre, updateStatut, toggleActif } from '../../api/membres'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 import { PageSpinner } from '../../components/Spinner'
 import Pagination from '../../components/Pagination'
 import Modal from '../../components/Modal'
@@ -179,7 +179,7 @@ export default function MembresPage() {
 
         {!filtered.length && (
           <EmptyState
-            icon={Users => <Search size={22} strokeWidth={1.4} />}
+            icon={Search}
             title="Aucun membre trouvé"
             desc={search ? `Aucun résultat pour "${search}"` : 'Créez votre premier membre.'}
           />

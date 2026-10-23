@@ -29,6 +29,7 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
 
     public LoginResponse login(LoginRequest request) {
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         log.debug("Tentative de connexion pour: {}", request.getEmail());
 
         Membre membre = membreRepository.findByEmail(request.getEmail())

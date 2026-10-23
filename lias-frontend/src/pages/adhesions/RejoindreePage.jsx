@@ -9,7 +9,7 @@ const BG     = '#1C1917'
 const BG2    = '#141210'
 const ACCENT = '#C2410C'
 const WHITE  = '#FAFAF8'
-const MUTED  = 'rgba(250,250,248,.38)'
+const MUTED  = 'rgba(250,250,248,.62)'
 const BORDER = 'rgba(250,250,248,.10)'
 
 function fieldStyle(hasError) {
@@ -48,7 +48,11 @@ export default function RejoindreePage() {
 
   const onSubmit = async (data) => {
     try {
-      await soumettreDemande(data)
+      const body = new FormData()
+      const { cv, ...fields } = data
+      body.append('donnees', new Blob([JSON.stringify(fields)], { type: 'application/json' }))
+      if (cv?.[0]) body.append('cv', cv[0])
+      await soumettreDemande(body)
       setSuccess(true)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Erreur lors de la soumission')
@@ -82,7 +86,7 @@ export default function RejoindreePage() {
             </h2>
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.84rem', color: MUTED, lineHeight: 1.65, marginBottom: '2rem' }}>
               Votre demande d'adhésion a été soumise avec succès.<br />
-              Le directeur du laboratoire l'examinera et vous contactera par email.
+              Les responsables examineront votre dossier. Après acceptation, vous pourrez vous connecter avec le mot de passe choisi.
             </p>
             <Link
               to="/login"
@@ -127,9 +131,10 @@ export default function RejoindreePage() {
             </p>
           </div>
 
+          <Link to="/" className="block text-sm text-orange-300 mb-5">← Retour à l’accueil</Link>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Prénom + Nom */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { key: 'prenom', label: 'Prénom', ph: 'Votre prénom' },
                 { key: 'nom',    label: 'Nom',    ph: 'Votre nom' },
@@ -141,6 +146,7 @@ export default function RejoindreePage() {
                   <div className="relative">
                     <FieldIcon icon={User} />
                     <input
+                      aria-label={label}
                       className="outline-none"
                       placeholder={ph}
                       style={fieldStyle(!!errors[key])}
@@ -163,8 +169,9 @@ export default function RejoindreePage() {
                 <FieldIcon icon={Mail} />
                 <input
                   type="email"
+                  aria-label="Email professionnel ou universitaire"
                   className="outline-none"
-                  placeholder="nom@universite.dz"
+                  placeholder="nom@universite.ma"
                   style={fieldStyle(!!errors.email)}
                   onFocus={onFocus}
                   onBlur={e => onBlur(e, !!errors.email)}
@@ -177,6 +184,17 @@ export default function RejoindreePage() {
               {errors.email && <p style={{ fontFamily: 'var(--font-mono)', color: '#FCA5A5', fontSize: '.70rem', marginTop: 3 }}>{errors.email.message}</p>}
             </div>
 
+            <div>
+              <label htmlFor="signup-password" className="block text-sm text-stone-300 mb-2">Mot de passe</label>
+              <input id="signup-password" type="password" autoComplete="new-password" style={fieldStyle(!!errors.password)} {...register('password', { required: 'Mot de passe obligatoire', minLength: { value: 8, message: '8 caractères minimum' }, maxLength: { value: 72, message: '72 caractères maximum' } })} />
+              {errors.password && <p className="text-red-300 text-xs">{errors.password.message}</p>}
+            </div>
+            <div>
+              <label htmlFor="signup-cv" className="block text-sm text-stone-300 mb-2">Votre CV — PDF, 5 Mo maximum (facultatif)</label>
+              <input id="signup-cv" type="file" accept=".pdf,application/pdf" className="text-sm text-stone-300 w-full" {...register('cv', { validate: files => !files?.[0] || (files[0].size <= 5 * 1024 * 1024 && files[0].name.toLowerCase().endsWith('.pdf')) || 'Choisissez un PDF de 5 Mo maximum' })} />
+              {errors.cv && <p className="text-red-300 text-xs">{errors.cv.message}</p>}
+              <p className="text-xs text-stone-400 mt-2">Votre CV est réservé aux responsables du laboratoire.</p>
+            </div>
             {/* Motivation */}
             <div>
               <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.07em', color: MUTED, marginBottom: 6 }}>
@@ -186,6 +204,7 @@ export default function RejoindreePage() {
                 <FileText size={14} className="absolute left-3.5 top-3.5 pointer-events-none" style={{ color: MUTED }} />
                 <textarea
                   rows={4}
+                  aria-label="Motivation"
                   className="outline-none resize-none"
                   placeholder="Présentez-vous brièvement et expliquez pourquoi vous souhaitez rejoindre le laboratoire…"
                   style={{ ...fieldStyle(!!errors.motivation), padding: '11px 14px 11px 40px' }}

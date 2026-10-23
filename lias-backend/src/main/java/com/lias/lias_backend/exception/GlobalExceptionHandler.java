@@ -18,6 +18,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(Exception ex,HttpServletRequest request) {
+        return ResponseEntity.status(409).body(ErrorResponse.builder().status(409).message("Opération déjà enregistrée ou données en conflit. Actualisez avant de réessayer.")
+            .path(request.getRequestURI()).timestamp(LocalDateTime.now()).build());
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(Exception ex, HttpServletRequest request) {
+        return ResponseEntity.status(401).body(ErrorResponse.builder().status(401)
+            .message("Email ou mot de passe incorrect").path(request.getRequestURI()).timestamp(LocalDateTime.now()).build());
+    }
+
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleUploadSize(Exception ex, HttpServletRequest request) {
+        return ResponseEntity.status(413).body(ErrorResponse.builder().status(413)
+            .message("Fichier trop volumineux").path(request.getRequestURI()).timestamp(LocalDateTime.now()).build());
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(

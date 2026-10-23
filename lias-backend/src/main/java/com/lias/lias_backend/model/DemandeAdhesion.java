@@ -31,6 +31,9 @@ public class DemandeAdhesion {
     @Column(length = 500)
     private String cv;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private String passwordHash;
+
     @Column(columnDefinition = "TEXT")
     private String motivation;
 

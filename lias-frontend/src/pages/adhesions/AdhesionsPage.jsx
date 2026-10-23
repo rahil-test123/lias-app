@@ -1,6 +1,7 @@
+import { downloadPdf } from '../../api/download'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { CheckCircle, XCircle, Clock, Mail, ClipboardList } from 'lucide-react'
+import { CheckCircle, XCircle, Mail, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getAdhesions, traiterAdhesion } from '../../api/adhesions'
 import { PageSpinner } from '../../components/Spinner'
@@ -33,7 +34,7 @@ export default function AdhesionsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['adhesions', page, filtre],
-    queryFn: () => getAdhesions({ page, size: 10, sort: 'dateSoumission,desc' }),
+    queryFn: () => getAdhesions({ page, size: 10, sort: 'dateSoumission,desc', statut: filtre }),
   })
 
   const traiterMutation = useMutation({
@@ -60,7 +61,7 @@ export default function AdhesionsPage() {
         {STATUTS.map(s => (
           <button
             key={s ?? 'all'}
-            onClick={() => setFiltre(s)}
+            onClick={() => { setFiltre(s); setPage(0) }}
             className={`filter-tab ${filtre === s ? 'filter-tab-active' : ''}`}
           >
             {FILTRE_LABELS[s ?? 'null'] ?? FILTRE_LABELS[s]}
@@ -100,6 +101,7 @@ export default function AdhesionsPage() {
                     <AdhesionBadge statut={a.statut} />
                   </div>
 
+                  {a.cv && <button className="btn-secondary mb-3" onClick={() => downloadPdf(`/adhesions/${a.id}/cv`, `cv-candidature-${a.id}.pdf`)}>Télécharger le CV</button>}
                   {/* Motivation */}
                   {a.motivation && (
                     <p

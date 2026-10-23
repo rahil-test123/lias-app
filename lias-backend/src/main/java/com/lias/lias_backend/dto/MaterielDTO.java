@@ -13,11 +13,17 @@ public class MaterielDTO {
     private Long id;
 
     @NotBlank(message = "Nom obligatoire")
+    @jakarta.validation.constraints.Size(max=200)
     private String nom;
 
-    private String description;
+    @jakarta.validation.constraints.Size(max=2000) private String description;
+    @jakarta.validation.constraints.Size(max=100) private String categorie;
+    @jakarta.validation.constraints.Size(max=100) private String etat;
+    @jakarta.validation.constraints.Size(max=2000) private String remarques;
+    private boolean archive;
 
     @NotNull(message = "Quantité obligatoire")
+    @jakarta.validation.constraints.Min(0)
     private Integer quantiteTotal;
 
     private Integer quantiteDisponible;

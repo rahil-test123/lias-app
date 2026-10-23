@@ -4,20 +4,22 @@ import {
   ClipboardList, Bell, History, FileText,
   FolderOpen, FlaskConical, LogOut, Package, UsersRound,
 } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 
 const NAV = [
   { to: '/dashboard',     icon: LayoutDashboard, label: 'Tableau de bord' },
   { to: '/membres',       icon: Users,            label: 'Membres'         },
   { to: '/equipes',       icon: UsersRound,       label: 'Équipes'         },
   { to: '/publications',  icon: BookOpen,         label: 'Publications'    },
+  { to: '/reunions', icon: Calendar, label: 'Réunions & PV' },
   { to: '/evenements',    icon: Calendar,         label: 'Événements'      },
-  { to: '/materiels',     icon: Package,          label: 'Matériels'       },
+  { to: '/materiels',     icon: Package,          label: 'Matériels & stocks'       },
   { to: '/notifications', icon: Bell,             label: 'Notifications'   },
   { to: '/mon-profil',    icon: Users,            label: 'Mon profil'      },
 ]
 
 const NAV_ADMIN = [
+  { to: '/utilisateurs', icon: Users, label: 'Utilisateurs & CV', adminOnly: true },
   { to: '/adhesions',  icon: ClipboardList, label: 'Adhésions'  },
   { to: '/historique', icon: History,       label: 'Historique' },
   { to: '/rapports',   icon: FileText,      label: 'Rapports'   },
@@ -43,7 +45,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="flex flex-col h-full select-none shrink-0"
+      className="app-sidebar flex flex-col h-full select-none shrink-0"
       style={{
         width: 232,
         background: 'var(--sidebar-bg)',
@@ -124,7 +126,7 @@ export default function Sidebar() {
             />
             <p className="sidebar-section-label px-5 pb-2">Administration</p>
 
-            {NAV_ADMIN.map(({ to, icon: Icon, label }) => (
+            {NAV_ADMIN.filter(item => !item.adminOnly || isAdmin).map(({ to, icon: Icon, label }) => (
               <NavLink
                 key={to}
                 to={to}

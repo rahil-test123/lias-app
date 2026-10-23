@@ -26,4 +26,9 @@ public class AttributionMaterielDTO {
 
     private LocalDate dateAttribution;
     private Integer quantiteDisponible;
+    private boolean annule;
+    private String administrateur;
+    private String motifAnnulation;
+    @jakarta.validation.constraints.Size(max=100) private String cleOperation;
+    private boolean gestionDemande;
 }

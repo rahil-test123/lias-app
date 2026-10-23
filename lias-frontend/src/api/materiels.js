@@ -14,4 +14,4 @@ export const getAttributionsByMembre   = (membreId) =>
 export const getAttributionsByMateriel = (materielId) =>
   api.get(`/materiels/${materielId}/attributions`).then((r) => r.data)
 export const attribuerMateriel = (data)          => api.post('/materiels/attributions', data).then((r) => r.data)
-export const revoquerAttribution = (attributionId) => api.delete(`/materiels/attributions/${attributionId}`)
+export const revoquerAttribution = ({ id, motif, gestionDemande }) => gestionDemande ? api.put(`/stock/affectations/${id}/annuler`, { motif }) : api.delete(`/materiels/attributions/${id}`, { params: { motif } })

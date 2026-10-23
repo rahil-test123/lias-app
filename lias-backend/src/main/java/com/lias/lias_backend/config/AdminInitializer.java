@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * Garantit qu'il existe toujours un compte admin fonctionnel au démarrage.
- * Met à jour le mot de passe avec le vrai BCryptPasswordEncoder de Spring.
+ * Initialise le compte administrateur en son absence.
+ * Préserve les identifiants des comptes existants.
  */
 @Component
 @RequiredArgsConstructor
@@ -20,38 +20,38 @@ public class AdminInitializer implements CommandLineRunner {
     private final MembreRepository membreRepository;
     private final PasswordEncoder  passwordEncoder;
 
-    private static final String ADMIN_EMAIL = "rahil.msouhli123@gmail.com";
-    private static final String ADMIN_PASSWORD = "Admin1234!";
+    @org.springframework.beans.factory.annotation.Value("${app.bootstrap-admin.email:admin@lias.ma}")
+    private String adminEmail;
+    @org.springframework.beans.factory.annotation.Value("${app.bootstrap-admin.password:}")
+    private String adminPassword;
 
     @Override
     public void run(String... args) {
         try {
             // Cherche par email d'abord, sinon par id=1
-            Membre admin = membreRepository.findByEmail(ADMIN_EMAIL)
+            Membre admin = membreRepository.findByEmail(adminEmail)
                     .orElseGet(() -> membreRepository.findById(1L).orElse(null));
 
             if (admin != null) {
-                admin.setEmail(ADMIN_EMAIL);
-                admin.setNom("Msouhli");
-                admin.setPrenom("Rahil");
-                admin.setPassword(passwordEncoder.encode(ADMIN_PASSWORD));
-                admin.setRole(Membre.RoleMembre.ROLE_ADMIN);
-                admin.setActif(true);
-                membreRepository.save(admin);
-                log.info("=== ADMIN initialisé : {} / {} ===", ADMIN_EMAIL, ADMIN_PASSWORD);
+                log.info("Compte administrateur existant conservé");
+                return;
             } else {
+                if (adminPassword == null || adminPassword.isBlank()) {
+                    log.warn("Configurer app.bootstrap-admin.password pour créer le premier administrateur");
+                    return;
+                }
                 log.warn("=== Aucun membre id=1 trouvé — création admin ===");
                 Membre newAdmin = Membre.builder()
                         .nom("Msouhli")
                         .prenom("Rahil")
-                        .email(ADMIN_EMAIL)
-                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                        .email(adminEmail)
+                        .password(passwordEncoder.encode(adminPassword))
                         .statut(Membre.StatutMembre.PERMANENT)
                         .role(Membre.RoleMembre.ROLE_ADMIN)
                         .actif(true)
                         .build();
                 membreRepository.save(newAdmin);
-                log.info("=== ADMIN créé : {} / {} ===", ADMIN_EMAIL, ADMIN_PASSWORD);
+                log.info("Compte administrateur initial créé");
             }
         } catch (Exception e) {
             log.error("Erreur lors de l'initialisation admin : {}", e.getMessage());

@@ -157,17 +157,17 @@ export default function MembreDetailPage() {
           {/* Matériels */}
           <div className="card p-5 page-in s4">
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '.96rem', color: 'var(--text-1)', marginBottom: '.75rem' }}>
-              Matériels attribués <span className="mono-sm" style={{ color: 'var(--text-3)' }}>({attributions?.length || 0})</span>
+              Historique du matériel <span className="mono-sm" style={{ color: 'var(--text-3)' }}>({attributions?.length || 0})</span>
             </h2>
             <div className="space-y-1">
               {attributions?.map(a => (
-                <div key={a.id} className="flex items-center justify-between py-2" style={{ borderBottom: '1px solid var(--border)' }}>
+                <div key={`${a.gestionDemande ? 'demande' : 'direct'}-${a.id}`} className="flex flex-wrap gap-2 items-center justify-between py-2" style={{ borderBottom: '1px solid var(--border)' }}>
                   <div className="flex items-center gap-2">
                     <Package size={13} style={{ color: 'var(--text-3)' }} />
                     <span style={{ fontSize: '.84rem', color: 'var(--text-1)' }}>{a.materielNom}</span>
                   </div>
                   <span className="mono-sm" style={{ color: 'var(--text-3)' }}>
-                    Qté {a.quantite} · {fmt(a.dateAttribution)}
+                    Qté {a.quantite} · {fmt(a.dateAttribution)} · {a.annule ? 'Annulée / matériel rendu' : 'Active'}
                   </span>
                 </div>
               ))}

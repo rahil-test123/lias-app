@@ -31,4 +31,13 @@ public class AttributionMateriel {
 
     @Column(name = "date_attribution", nullable = false)
     private LocalDate dateAttribution;
+
+    @Column(nullable=false, columnDefinition="bit default 0") private boolean annule;
+    private String administrateur;
+    @Column(length=2000) private String motifAnnulation;
+    private java.time.LocalDateTime dateAnnulation;
+    @Column(unique=true, length=100) private String cleOperation;
+    private String materielNomSnapshot;
+    private String categorieSnapshot;
+    private String beneficiaireNomSnapshot;
 }

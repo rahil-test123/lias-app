@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Eye, EyeOff, ArrowRight, FlaskConical } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 
 export default function LoginPage() {
   const { login }  = useAuth()
@@ -16,7 +16,7 @@ export default function LoginPage() {
       await login(data.email, data.password)
       navigate('/dashboard')
     } catch (err) {
-      if (!err.response) {
+      if (!err.response || err.response.status >= 500) {
         toast.error('Serveur inaccessible — le backend est-il démarré ?', { duration: 5000 })
       } else {
         toast.error(err.response?.data?.message || 'Email ou mot de passe incorrect')
@@ -29,7 +29,7 @@ export default function LoginPage() {
   const BG2     = '#141210'
   const ACCENT  = '#C2410C'
   const WHITE   = '#FAFAF8'
-  const MUTED   = 'rgba(250,250,248,.38)'
+  const MUTED   = 'rgba(250,250,248,.62)'
   const BORDER  = 'rgba(250,250,248,.10)'
 
   return (
@@ -62,7 +62,7 @@ export default function LoginPage() {
 
         {/* Stats */}
         <div className="flex gap-8">
-          {[['8+', 'Chercheurs'], ['4', 'Équipes'], ['20+', 'Publications']].map(([n, l]) => (
+          {[['Recherche', 'Publications'], ['Collectif', 'Équipes'], ['Échanges', 'Réunions']].map(([n, l]) => (
             <div key={l}>
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', fontWeight: 700, color: WHITE, letterSpacing: '-.03em' }}>{n}</p>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: '.68rem', color: MUTED, marginTop: 2, textTransform: 'uppercase', letterSpacing: '.05em' }}>{l}</p>
@@ -93,6 +93,7 @@ export default function LoginPage() {
             </p>
           </div>
 
+          <Link to="/" className="block text-sm text-orange-300 mb-5">← Accueil public</Link>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email */}
             <div>

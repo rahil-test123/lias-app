@@ -32,7 +32,11 @@ public class Membre {
     private String email;
 
     @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String password;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private String cv;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

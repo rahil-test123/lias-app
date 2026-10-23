@@ -15,6 +15,7 @@ public interface AttributionMaterielRepository extends JpaRepository<Attribution
 
     List<AttributionMateriel> findByMaterielId(Long materielId);
 
-    @Query("SELECT SUM(a.quantite) FROM AttributionMateriel a WHERE a.materiel.id = :materielId")
+    java.util.Optional<AttributionMateriel> findByCleOperation(String cleOperation);
+    @Query("SELECT SUM(a.quantite) FROM AttributionMateriel a WHERE a.materiel.id = :materielId AND a.annule = false")
     Integer getTotalAttribue(Long materielId);
 }

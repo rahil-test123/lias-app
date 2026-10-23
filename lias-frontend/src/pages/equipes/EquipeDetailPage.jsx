@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Users, UserPlus, UserMinus, Award, Plus, Trash2, ArrowLeft } from 'lucide-react'
+import { Users, UserPlus, UserMinus, Plus, Trash2, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getEquipe, ajouterMembre, retirerMembre, ajouterMandat, terminerMandat } from '../../api/equipes'
 import { getMembresActifs } from '../../api/membres'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 import { PageSpinner } from '../../components/Spinner'
 import Modal from '../../components/Modal'
 

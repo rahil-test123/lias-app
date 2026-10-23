@@ -5,7 +5,7 @@ import { Plus, Calendar, MapPin, Trash2, ChevronRight, Edit2 } from 'lucide-reac
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getEvenements, createEvenement, updateEvenement, deleteEvenement } from '../../api/evenements'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 import { PageSpinner } from '../../components/Spinner'
 import Pagination from '../../components/Pagination'
 import Modal from '../../components/Modal'

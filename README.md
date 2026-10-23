@@ -30,6 +30,7 @@ cd lias-backend
 # Copier et configurer le fichier de propriétés
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 # Renseigner vos identifiants MySQL dans application.properties
+# Définir DB_PASSWORD (mot de passe MySQL) et JWT_SECRET (secret aléatoire d'au moins 32 caractères)
 mvn spring-boot:run
 ```
 
@@ -40,8 +41,12 @@ npm install
 npm run dev
 ```
 
-L'application sera accessible sur `http://localhost:5173`  
+L'application sera accessible sur `http://localhost:3000`  
 L'API backend tourne sur `http://localhost:8081`
+
+Les fichiers `application.properties`, les dossiers `uploads/` (CV/PV) et les captures de vérification restent locaux et ne sont pas publiés.
+La base MySQL n'est pas incluse dans Git : Hibernate crée ou met à jour le schéma et `data.sql` fournit les données d'exemple.
+Les comptes de `data.sql` sont destinés au développement. Pour une base vide sans ces données, configurer `app.bootstrap-admin.email` et `app.bootstrap-admin.password` pour initialiser l'administrateur ; un compte existant est conservé.
 
 ## Comptes de test
 

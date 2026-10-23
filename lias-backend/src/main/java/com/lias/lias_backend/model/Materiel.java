@@ -24,6 +24,12 @@ public class Materiel {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private String categorie;
+    private String etat;
+    @Column(length=2000) private String remarques;
+    @Column(nullable=false, columnDefinition="bit default 0")
+    private boolean archive;
+
     @Column(name = "quantite_total", nullable = false)
     private Integer quantiteTotal = 0;
 

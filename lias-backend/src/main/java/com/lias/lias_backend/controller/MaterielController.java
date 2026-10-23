@@ -92,8 +92,8 @@ public class MaterielController {
 
     @DeleteMapping("/attributions/{attributionId}")
     @PreAuthorize("hasAnyRole('ADMIN','DIRECTEUR')")
-    public ResponseEntity<Void> revoquer(@PathVariable Long attributionId) {
-        materielService.revoquerAttribution(attributionId);
+    public ResponseEntity<Void> revoquer(@PathVariable Long attributionId,@RequestParam String motif) {
+        materielService.revoquerAttribution(attributionId,motif);
         return ResponseEntity.noContent().build();
     }
 }

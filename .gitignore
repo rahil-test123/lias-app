@@ -1,0 +1,22 @@
+# Configuration et secrets locaux
+.env
+.env.*
+!.env.example
+**/src/main/resources/application.properties
+**/src/main/resources/application-*.properties
+!**/src/main/resources/application.properties.example
+
+# Documents utilisateurs (CV, PV, pièces jointes)
+**/uploads/
+
+# Dépendances et fichiers générés
+**/node_modules/
+**/target/
+**/dist/
+*.log
+
+# Captures et vérifications locales contenant des données personnelles
+/connexion-verifiee.png
+/docs/verification/
+/docs/*fixture*.json
+/docs/DEMO_*.json
